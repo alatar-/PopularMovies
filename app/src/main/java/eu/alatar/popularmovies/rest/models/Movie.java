@@ -13,7 +13,7 @@ public class Movie {
     private String releaseDate;
     private List<Integer> genreIds = null;
     private Integer id;
-    private String originalTitle;
+//    private String originalTitle;
     private String originalLanguage;
     private String title;
     private String backdropPath;
@@ -71,13 +71,13 @@ public class Movie {
         this.id = id;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
+//    public String getOriginalTitle() {
+//        return originalTitle;
+//    }
+//
+//    public void setOriginalTitle(String originalTitle) {
+//        this.originalTitle = originalTitle;
+//    }
 
     public String getOriginalLanguage() {
         return originalLanguage;
@@ -141,6 +141,10 @@ public class Movie {
 
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    public String toString() {
+        return this.title + " (" + this.releaseDate + "), img: " + this.posterPath;
     }
 
 }

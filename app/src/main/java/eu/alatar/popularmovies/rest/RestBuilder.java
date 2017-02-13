@@ -1,5 +1,8 @@
 package eu.alatar.popularmovies.rest;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
@@ -19,6 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RestBuilder {
+    public static final String THE_MOVIE_DB_API_BASE_URL = "https://api.themoviedb.org/3/";
 
     public static APIInterface createAPInterfaceInstance() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
@@ -41,11 +45,16 @@ public class RestBuilder {
             }
         });
 
+        // Setup JSON parser
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
         // Build retrofit instance
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Preferences.THE_MOVIE_DB_API_BASE_URL)
+                .baseUrl(THE_MOVIE_DB_API_BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(builder.build())
                 .build();
 

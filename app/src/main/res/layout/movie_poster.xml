@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="18px"
-        android:id="@+id/tv_movie_poster"/>
+        android:background="@color/colorPrimaryDark"
+        android:id="@+id/iv_movie_poster"
+        android:adjustViewBounds="true"/>
 </FrameLayout>
