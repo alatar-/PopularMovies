@@ -6,14 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import eu.alatar.popularmovies.api.themedbmovies.TheMovieDbAPIInterface;
-import eu.alatar.popularmovies.api.themedbmovies.TheMovieDbAPIService;
-import eu.alatar.popularmovies.api.themedbmovies.models.Movie;
-import eu.alatar.popularmovies.api.themedbmovies.models.MovieSetPage;
+
 import eu.alatar.popularmovies.preferences.Preferences;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import eu.alatar.popularmovies.rest.RestService;
+import eu.alatar.popularmovies.rest.models.MovieSet;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class MovieListActivity extends AppCompatActivity {
 
@@ -33,32 +32,19 @@ public class MovieListActivity extends AppCompatActivity {
         mMovieListAdapter = new MovieListAdapter();
         mMoviesRecyclerView.setAdapter(mMovieListAdapter);
 
-        // Initialize API
-        TheMovieDbAPIInterface apiService = TheMovieDbAPIService.getAPIInterface();
+        // Populate first data
+        RestService apiService = RestService.getAPIService();
 
-        // Test the API
-        Call<MovieSetPage> call = apiService.getPopularMovies();
-        call.enqueue(new Callback<MovieSetPage>() {
-            @Override
-            public void onResponse(Call<MovieSetPage> call, Response<MovieSetPage> response) {
-                int statusCode = response.code();
-                MovieSetPage page = response.body();
-                Log.v(Preferences.TAG, "API request successful");
-                if (page != null) {
-                    for (Movie movie: page.getResults()) {
-                        Log.d(Preferences.TAG, movie.getTitle());
+        Observable<MovieSet> request = apiService.mAPIInterface.getPopularMovies();
+        request.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(moviesSet -> {
+                    if (moviesSet != null) {
+                        mMovieListAdapter.addMovies(moviesSet.getResults());
+                    } else {
+                        Log.e(Preferences.TAG, "Body is empty!");
                     }
-                } else {
-                    Log.e(Preferences.TAG, "Body is empty!");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieSetPage> call, Throwable t) {
-                Log.e(Preferences.TAG, "API request failed");
-                Log.e(Preferences.TAG, t.getMessage());
-            }
-        });
+                });
     }
 
 }

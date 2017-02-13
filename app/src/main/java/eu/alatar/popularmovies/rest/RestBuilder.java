@@ -1,8 +1,11 @@
-package eu.alatar.popularmovies.api.themedbmovies;
+package eu.alatar.popularmovies.rest;
+
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 
 import eu.alatar.popularmovies.preferences.Credentials;
+import eu.alatar.popularmovies.preferences.Preferences;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -12,24 +15,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by kam on 10/02/17.
+ * Created by kam on 13/02/17.
  */
 
-public class TheMovieDbAPIService {
+public class RestBuilder {
 
-    private static final String API_BASE_URL = "https://api.themoviedb.org/3/";
-
-    private static TheMovieDbAPIInterface sAPIServiceInstance = null;
-
-    public static TheMovieDbAPIInterface getAPIInterface() {
-        if (sAPIServiceInstance == null) {
-            createAPIServiceInstance();
-        }
-        return sAPIServiceInstance;
-    }
-
-
-    private static void createAPIServiceInstance() {
+    public static APIInterface createAPInterfaceInstance() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         // Add logging interceptor
@@ -52,14 +43,13 @@ public class TheMovieDbAPIService {
 
         // Build retrofit instance
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
+                .baseUrl(Preferences.THE_MOVIE_DB_API_BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(builder.build())
                 .build();
 
         // Initilize the interface
-        sAPIServiceInstance =
-                retrofit.create(TheMovieDbAPIInterface.class);
+        return retrofit.create(APIInterface.class);
     }
-
 }

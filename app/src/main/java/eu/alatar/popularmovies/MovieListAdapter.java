@@ -6,15 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.alatar.popularmovies.rest.models.Movie;
+
 /**
  * Created by kam on 10/02/17.
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MoviesAdapterViewHolder> {
 
-    private String[] mData;
+    private List<Movie> mMovies;
 
     public MovieListAdapter() {
-        this.mData = new String[]{"El1", "Element2", "eli3"};
+        this.mMovies = new ArrayList<Movie>();
     }
 
     @Override
@@ -28,17 +33,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(MoviesAdapterViewHolder holder, int position) {
-        String text = mData[position];
-        holder.mMoviesTextView.setText(text);
+        Movie movie = mMovies.get(position);
+        holder.mMoviesTextView.setText(movie.getTitle());
     }
 
     @Override
     public int getItemCount() {
-        if (mData == null) {
-            return 0;
-        } else {
-            return mData.length;
-        }
+        return mMovies.size();
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder {
@@ -49,5 +50,15 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             mMoviesTextView = (TextView) itemView.findViewById(R.id.tv_movie_poster);
 
         }
+    }
+
+    public void addMovie(Movie movie) {
+        this.mMovies.add(movie);
+        notifyDataSetChanged();
+    }
+
+    public void addMovies(List<Movie> movies) {
+        this.mMovies.addAll(movies);
+        notifyDataSetChanged();
     }
 }

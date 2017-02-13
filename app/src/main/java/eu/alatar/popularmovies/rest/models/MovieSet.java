@@ -1,11 +1,11 @@
-package eu.alatar.popularmovies.api.themedbmovies.models;
+package eu.alatar.popularmovies.rest.models;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /* Generated using http://www.jsonschema2pojo.org/ */
-public class MovieSetPage {
+public class MovieSet {
 
     private Integer page;
     private List<Movie> results = null;

@@ -1,4 +1,4 @@
-package eu.alatar.popularmovies.api.themedbmovies.models;
+package eu.alatar.popularmovies.rest.models;
 
 import java.util.HashMap;
 import java.util.List;
