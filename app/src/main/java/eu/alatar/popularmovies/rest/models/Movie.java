@@ -1,11 +1,12 @@
 package eu.alatar.popularmovies.rest.models;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /* Generated using http://www.jsonschema2pojo.org/ */
-public class Movie {
+public class Movie implements Serializable {
 
     private String posterPath;
     private Boolean adult;

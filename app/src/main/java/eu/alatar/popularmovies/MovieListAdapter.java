@@ -23,15 +23,21 @@ import eu.alatar.popularmovies.rest.models.Movie;
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MoviesAdapterViewHolder> {
 
     private List<Movie> mMovies;
+    private MovieListClickHandler mClickHandler;
 
-    public MovieListAdapter() {
+    public interface MovieListClickHandler {
+        void onClick(Movie movie);
+    }
+
+    public MovieListAdapter(MovieListClickHandler handler) {
         this.mMovies = new ArrayList<Movie>();
+        this.mClickHandler = handler;
     }
 
     @Override
     public MoviesAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         boolean shouldAttachToParentImmediately = false;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_poster, parent, shouldAttachToParentImmediately);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_movie_list_rv_poster, parent, shouldAttachToParentImmediately);
 
         return new MoviesAdapterViewHolder(view);
 
@@ -54,13 +60,20 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         return mMovies.size();
     }
 
-    public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mImageViewPoster;
 
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
             mImageViewPoster = (ImageView) itemView.findViewById(R.id.iv_movie_poster);
+            itemView.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            Movie currentMovie = mMovies.get(adapterPosition);
+            mClickHandler.onClick(currentMovie);
         }
     }
 
