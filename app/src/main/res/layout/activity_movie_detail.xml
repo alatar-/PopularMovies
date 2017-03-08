@@ -28,6 +28,17 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+            <!--
+                TODO: Make the longer movie titles fully visible instead of been truncated
+                Alternatives:
+                * running text if possible
+                    https://stackoverflow.com/questions/38242519/make-collapsingtoolbartitle-become-a-running-text?noredirect=1&lq=1
+                * smaller font for longer strings
+                    https://stackoverflow.com/questions/34185843/android-collapsing-toolbar-how-to-resize-the-text-so-that-it-shows-full-text-t
+                    https://stackoverflow.com/questions/11259311/action-bar-title-with-more-than-one-line
+                * ?
+            -->
+
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
