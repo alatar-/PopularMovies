@@ -8,60 +8,62 @@
     tools:context="eu.alatar.popularmovies.MovieDetailActivity"
     tools:showIn="@layout/activity_movie_detail">
 
-
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_movie_thumbnail"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="5dp">
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_height="250dp" />
 
-            <ImageView
-                android:id="@+id/iv_movie_thumbnail"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+        <TextView
+            android:id="@+id/tv_movie_release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintLeft_toRightOf="@+id/iv_movie_thumbnail"
+            app:layout_constraintTop_toTopOf="@+id/iv_movie_thumbnail"
+            tools:text="2016" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="20dp">
-
-                <TextView
-                    android:id="@+id/tv_movie_release_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/tv_movie_user_rating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="3dp"
-                    android:textSize="20sp" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/tv_movie_user_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="3dp"
+            android:textSize="20sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+            app:layout_constraintLeft_toLeftOf="@+id/tv_movie_release_date"
+            app:layout_constraintTop_toBottomOf="@+id/tv_movie_release_date"
+            tools:text="8.5/10"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/tv_movie_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textSize="10sp" />
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="14sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintTop_toBottomOf="@+id/iv_movie_thumbnail"
+            tools:text="sdfaldsfdfddf adfdsf" />
 
-    </LinearLayout>
-
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.v4.widget.NestedScrollView>

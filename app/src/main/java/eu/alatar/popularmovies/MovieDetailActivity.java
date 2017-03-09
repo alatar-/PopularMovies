@@ -55,8 +55,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         mMovie = (Movie) getIntent().getSerializableExtra("movie");
 
         this.setTitle(mMovie.getTitle());
-        mMovieReleaseDateTextView.setText(mMovie.getReleaseDate());
-        mMovieUserRatingTextView.setText(String.valueOf(mMovie.getVoteCount()));
+        mMovieReleaseDateTextView.setText(mMovie.getReleaseDate().substring(0, 4));
+        mMovieUserRatingTextView.setText(String.valueOf(mMovie.getVoteAverage()) + "/10");
         mMoviePlotTextView.setText(mMovie.getOverview());
 
         Context context = mMovieThumbnailImageView.getContext();
