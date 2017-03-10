@@ -19,6 +19,6 @@ public interface APIInterface {
     @GET("movie/popular")
     Observable<MovieSet> getPopularMovies();
 
-    @GET("movie/top-rated")
-    Call<MovieSet> getTopRatedMovies();
+    @GET("movie/top_rated")
+    Observable<MovieSet> getTopRatedMovies();
 }
