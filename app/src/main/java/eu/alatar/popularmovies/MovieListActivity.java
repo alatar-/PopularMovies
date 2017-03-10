@@ -2,10 +2,10 @@ package eu.alatar.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +28,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     private RecyclerView mMoviesRecyclerView;
     private MovieListAdapter mMovieListAdapter;
 
-    private MenuItem sortOrder;
+    final private String BUNDLE_SORT_ORDER_KEY = "sort_order";
+    private int mMovieListCurrentSortOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,26 +44,42 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         mMovieListAdapter = new MovieListAdapter(this);
         mMoviesRecyclerView.setAdapter(mMovieListAdapter);
 
+        // Initilize view default setting
+        mMovieListCurrentSortOrder = Preferences.MOVIE_LIST_DEFAULT_SORT_ORDER;
+
         // Initilize API interface
         mAPIInterface = RestService.getAPIService().mAPIInterface;
 
-        // Populate data
-        MenuItem actionDefaultSortOrder = (MenuItem) findViewById(R.id.menu_sort_most_popular);
-        populateData(actionDefaultSortOrder);
+        // Restore the state from previous activity lifecycle
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(BUNDLE_SORT_ORDER_KEY)) {
+                mMovieListCurrentSortOrder = savedInstanceState.getInt(BUNDLE_SORT_ORDER_KEY);
+            }
+        }
+
+        // Populate data and set
+        populateData();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_movie_list, menu);
+
+        Log.e(Preferences.TAG, String.valueOf(R.id.action_sort_most_popular));
+        Log.e(Preferences.TAG, String.valueOf(mMovieListCurrentSortOrder));
+
+        MenuItem sortOderMenuItem = menu.findItem(mMovieListCurrentSortOrder);
+        sortOderMenuItem.setChecked(true);
+
         return true;
     }
 
-    private void populateData(boolean type) {
+    private void populateData() {
         Log.d(Preferences.TAG, "Requesting movie data from API...");
-        Observable<MovieSet> request;
-        if (type) {
+        Observable<MovieSet> request = null;
+        if (mMovieListCurrentSortOrder == R.id.action_sort_most_popular) {
             request = mAPIInterface.getPopularMovies();
-        } else{
+        } else if (mMovieListCurrentSortOrder == R.id.action_sort_top_rated) {
             request = mAPIInterface.getTopRatedMovies();
         }
         request.subscribeOn(Schedulers.newThread())
@@ -81,22 +98,12 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        switch (itemId) {
-            /*
-             * When you click the reset menu item, we want to start all over
-             * and display the pretty gradient again. There are a few similar
-             * ways of doing this, with this one being the simplest of those
-             * ways. (in our humble opinion)
-             */
-            case R.id.menu_sort_most_popular:
-                populateData(true);
-                return true;
-            case R.id.menu_sort_top_rated:
-                populateData(false);
-                return true;
-
+        if (itemId == R.id.action_sort_most_popular || itemId == R.id.action_sort_top_rated) {
+            item.setChecked(true);
+            mMovieListCurrentSortOrder = itemId;
+            populateData();
+            return true;
         }
-        item.setChecked(true);
 
         return super.onOptionsItemSelected(item);
     }
@@ -111,5 +118,11 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
         intent.putExtra("movie", movie);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        outState.putInt(BUNDLE_SORT_ORDER_KEY, mMovieListCurrentSortOrder);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 }

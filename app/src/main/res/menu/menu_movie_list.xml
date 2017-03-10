@@ -5,16 +5,18 @@
     tools:context=".MovieListActivity">
 
     <item
-        android:icon="@android:drawable/ic_dialog_alert"
-        android:title="sort by"
+        android:title="SORT"
+        android:icon="@drawable/ic_filter_list_black_24dp"
         app:showAsAction="ifRoom">
-        <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/menu_sort_top_rated"
-                android:title="@string/menu_move_list_top_rated" />
-            <item
-                android:id="@+id/menu_sort_most_popular"
-                android:title="@string/menu_move_list_most_popular" />
-        </group>
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_sort_top_rated"
+                    android:title="@string/menu_move_list_top_rated" />
+                <item
+                    android:id="@+id/action_sort_most_popular"
+                    android:title="@string/menu_move_list_most_popular" />
+            </group>
+        </menu>
     </item>
 </menu>
