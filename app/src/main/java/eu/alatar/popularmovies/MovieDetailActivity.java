@@ -31,15 +31,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                onBackPressed();
             }
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mMovieReleaseDateTextView = (TextView) findViewById(R.id.tv_movie_release_date);
         mMovieUserRatingTextView = (TextView) findViewById(R.id.tv_movie_user_rating);
@@ -48,8 +46,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         // Parse and display intent context
         mMovie = (Movie) getIntent().getSerializableExtra("movie");
+        setTitle(mMovie.getTitle());
 
-        this.setTitle(mMovie.getTitle());
         mMovieReleaseDateTextView.setText(mMovie.getReleaseDate().substring(0, 4));
         mMovieUserRatingTextView.setText(String.valueOf(mMovie.getVoteAverage()) + "/10");
         mMoviePlotTextView.setText(mMovie.getOverview());
