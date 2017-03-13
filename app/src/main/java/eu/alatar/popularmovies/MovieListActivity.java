@@ -33,6 +33,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(Preferences.TAG, "MovieListActivity: onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
 
@@ -46,14 +47,17 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
         // Initilize view default setting
         mMovieListCurrentSortOrder = Preferences.MOVIE_LIST_DEFAULT_SORT_ORDER;
+        Log.d(Preferences.TAG, "MovieListActivity: Default sort order – " + String.valueOf(mMovieListCurrentSortOrder));
 
         // Initilize API interface
         mAPIInterface = RestService.getAPIService().mAPIInterface;
 
         // Restore the state from previous activity lifecycle
         if (savedInstanceState != null) {
+            Log.d(Preferences.TAG, "MovieListActivity: Restoring data from provided bundle.");
             if (savedInstanceState.containsKey(BUNDLE_SORT_ORDER_KEY)) {
                 mMovieListCurrentSortOrder = savedInstanceState.getInt(BUNDLE_SORT_ORDER_KEY);
+                Log.d(Preferences.TAG, "MovieListActivity: Restoring sort order – " + String.valueOf(mMovieListCurrentSortOrder));
             }
         }
 
@@ -63,6 +67,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(Preferences.TAG, "MovieListActivity: onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.menu_movie_list, menu);
 
         Log.e(Preferences.TAG, String.valueOf(R.id.action_sort_most_popular));
@@ -75,7 +80,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     }
 
     private void populateData() {
-        Log.d(Preferences.TAG, "Requesting movie data from API...");
+        Log.d(Preferences.TAG, "MovieListAcitivity: populateData");
+
         Observable<MovieSet> request = null;
         if (mMovieListCurrentSortOrder == R.id.action_sort_most_popular) {
             request = mAPIInterface.getPopularMovies();
@@ -97,6 +103,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        Log.d(Preferences.TAG, "MovieListAcitivity: onOptionsItemSelected");
 
         if (itemId == R.id.action_sort_most_popular || itemId == R.id.action_sort_top_rated) {
             item.setChecked(true);
@@ -110,7 +117,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
     @Override
     public void onClick(Movie movie) {
-        Log.d(Preferences.TAG, "\"" + movie.getTitle() + "\" clicked, starting DetailActivity...");
+        Log.d(Preferences.TAG, "MovieListAcitivity: onClick — " + movie.getTitle());
 
         Context context = getApplicationContext();
         Class destinationActivity = MovieDetailActivity.class;
@@ -121,8 +128,10 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(Preferences.TAG, "MovieListAcitivity: onSaveInstanceState — " + String.valueOf(mMovieListCurrentSortOrder));
         outState.putInt(BUNDLE_SORT_ORDER_KEY, mMovieListCurrentSortOrder);
-        super.onSaveInstanceState(outState, outPersistentState);
+        super.onSaveInstanceState(outState);
     }
+
 }
