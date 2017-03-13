@@ -2,19 +2,16 @@ package eu.alatar.popularmovies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.alatar.popularmovies.preferences.Preferences;
 import eu.alatar.popularmovies.rest.models.Movie;
 
 /**
@@ -47,7 +44,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     public void onBindViewHolder(MoviesAdapterViewHolder holder, int position) {
         Movie movie = mMovies.get(position);
         String posterUrl = "http://image.tmdb.org/t/p/w185/" + movie.getPosterPath();
-        Log.e(Preferences.TAG, movie.toString());
         Context context = holder.mImageViewPoster.getContext();
         Picasso.with(context)
                 .load(posterUrl)

@@ -2,15 +2,15 @@ package eu.alatar.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.PersistableBundle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.ProgressBar;
 
 import eu.alatar.popularmovies.preferences.Preferences;
 import eu.alatar.popularmovies.rest.APIInterface;
@@ -27,6 +27,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
     private RecyclerView mMoviesRecyclerView;
     private MovieListAdapter mMovieListAdapter;
+    private ProgressBar mLoadingIndicator;
 
     final private String BUNDLE_SORT_ORDER_KEY = "sort_order";
     private int mMovieListCurrentSortOrder;
@@ -36,6 +37,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         Log.d(Preferences.TAG, "MovieListActivity: onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
+
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         // Initialize Movie List RecyclerView
         mMoviesRecyclerView = (RecyclerView) findViewById(R.id.rv_movies_list);
@@ -82,6 +85,10 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     private void populateData() {
         Log.d(Preferences.TAG, "MovieListAcitivity: populateData");
 
+        // Show loading indicator
+        mMoviesRecyclerView.setVisibility(View.INVISIBLE);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+
         Observable<MovieSet> request = null;
         if (mMovieListCurrentSortOrder == R.id.action_sort_most_popular) {
             request = mAPIInterface.getPopularMovies();
@@ -94,6 +101,11 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
                     if (moviesSet != null) {
                         Log.d(Preferences.TAG, "Request successful. Displaying obtained movie posters...");
                         mMovieListAdapter.addMovies(moviesSet.getResults());
+
+                        // Hide loading indicator
+                        mLoadingIndicator.setVisibility(View.INVISIBLE);
+                        mMoviesRecyclerView.setVisibility(View.VISIBLE);
+
                     } else {
                         Log.e(Preferences.TAG, "Body is empty!");
                     }
