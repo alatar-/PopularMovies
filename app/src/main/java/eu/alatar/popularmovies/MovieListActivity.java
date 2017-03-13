@@ -3,6 +3,7 @@ package eu.alatar.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     private ProgressBar mLoadingIndicator;
 
     final private String BUNDLE_SORT_ORDER_KEY = "sort_order";
+    final private String BUNDLE_RV_STATE = "rv_bundle_state";
     private int mMovieListCurrentSortOrder;
 
     @Override
@@ -58,14 +60,14 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         // Restore the state from previous activity lifecycle
         if (savedInstanceState != null) {
             Log.d(Preferences.TAG, "MovieListActivity: Restoring data from provided bundle.");
-            if (savedInstanceState.containsKey(BUNDLE_SORT_ORDER_KEY)) {
-                mMovieListCurrentSortOrder = savedInstanceState.getInt(BUNDLE_SORT_ORDER_KEY);
-                Log.d(Preferences.TAG, "MovieListActivity: Restoring sort order – " + String.valueOf(mMovieListCurrentSortOrder));
-            }
-        }
 
-        // Populate data and set
-        populateData();
+            mMovieListCurrentSortOrder = savedInstanceState.getInt(BUNDLE_SORT_ORDER_KEY);
+
+            Parcelable movieListRVState = savedInstanceState.getParcelable(BUNDLE_RV_STATE);
+            populateData(movieListRVState);
+        } else {
+            populateData(null);
+        }
     }
 
     @Override
@@ -82,7 +84,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         return true;
     }
 
-    private void populateData() {
+    private void populateData(Parcelable movieListRVState) {
         Log.d(Preferences.TAG, "MovieListAcitivity: populateData");
 
         // Show loading indicator
@@ -102,6 +104,11 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
                         Log.d(Preferences.TAG, "Request successful. Displaying obtained movie posters...");
                         mMovieListAdapter.addMovies(moviesSet.getResults());
 
+                        // Restore previous position
+                        if (movieListRVState != null) {
+                            mMoviesRecyclerView.getLayoutManager().onRestoreInstanceState(movieListRVState);
+                        }
+
                         // Hide loading indicator
                         mLoadingIndicator.setVisibility(View.INVISIBLE);
                         mMoviesRecyclerView.setVisibility(View.VISIBLE);
@@ -120,7 +127,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         if (itemId == R.id.action_sort_most_popular || itemId == R.id.action_sort_top_rated) {
             item.setChecked(true);
             mMovieListCurrentSortOrder = itemId;
-            populateData();
+            populateData(null);
             return true;
         }
 
@@ -143,6 +150,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(Preferences.TAG, "MovieListAcitivity: onSaveInstanceState — " + String.valueOf(mMovieListCurrentSortOrder));
         outState.putInt(BUNDLE_SORT_ORDER_KEY, mMovieListCurrentSortOrder);
+        outState.putParcelable(BUNDLE_RV_STATE, mMoviesRecyclerView.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }
 
