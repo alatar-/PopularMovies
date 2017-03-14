@@ -124,8 +124,8 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
         Log.d(Preferences.TAG, "MovieListAcitivity: onOptionsItemSelected");
+        int itemId = item.getItemId();
 
         if (itemId == R.id.action_sort_most_popular || itemId == R.id.action_sort_top_rated) {
             item.setChecked(true);
@@ -145,7 +145,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         Class<MovieDetailActivity> destinationActivity = MovieDetailActivity.class;
         Intent intent = new Intent(context, destinationActivity);
 
-        intent.putExtra("movie", movie);
+        intent.putExtra(MovieDetailActivity.BUNDLE_MOVIE_KEY, movie);
         startActivity(intent);
     }
 

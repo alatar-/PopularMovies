@@ -14,6 +14,9 @@ import eu.alatar.popularmovies.rest.models.Movie;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    final public static String BUNDLE_MOVIE_KEY = "BUNDLE_MOVIE_KEY";
+    final public static String API_POSTER_PATH_PREFIX = "http://image.tmdb.org/t/p/w185/";
+
     private Movie mMovie;
 
     private TextView mMovieUserRatingTextView;
@@ -43,7 +46,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         mMovieThumbnailImageView = (ImageView) findViewById(R.id.iv_movie_thumbnail);
 
         // Parse and display intent context
-        mMovie = (Movie) getIntent().getParcelableExtra("movie");
+        mMovie = (Movie) getIntent().getParcelableExtra(BUNDLE_MOVIE_KEY);
         setTitle(mMovie.getTitle());
 
         mMovieReleaseDateTextView.setText(mMovie.getReleaseDate().substring(0, 4));
@@ -51,7 +54,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         mMoviePlotTextView.setText(mMovie.getOverview());
 
         Context context = mMovieThumbnailImageView.getContext();
-        String posterUrl = "http://image.tmdb.org/t/p/w185/" + mMovie.getPosterPath(); // Use the same size of the poster as it is already cached by Picasso
+        String posterUrl = API_POSTER_PATH_PREFIX + mMovie.getPosterPath(); // Use the same size of the poster as it is already cached by Picasso
         Picasso.with(context)
                 .load(posterUrl)
                 .into(mMovieThumbnailImageView);

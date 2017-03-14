@@ -42,11 +42,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     @Override
     public void onBindViewHolder(MoviesAdapterViewHolder holder, int position) {
         Movie movie = mMovies.get(position);
-        String posterUrl = "http://image.tmdb.org/t/p/w185/" + movie.getPosterPath();
+        String posterUrl = MovieDetailActivity.API_POSTER_PATH_PREFIX + movie.getPosterPath();
         Context context = holder.mImageViewPoster.getContext();
+        /* TODO: what if the poster is not obtained? */
         Picasso.with(context)
                 .load(posterUrl)
-//                .placeholder(R.drawable)
                 .into(holder.mImageViewPoster);
     }
 
