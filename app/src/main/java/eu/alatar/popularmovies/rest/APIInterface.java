@@ -12,9 +12,6 @@ import retrofit2.http.Path;
 
 public interface APIInterface {
 
-    @GET("movie/{id}")
-    Observable<Movie> getMovie(@Path("id") int id);
-
     @GET("movie/popular")
     Observable<MovieSet> getPopularMovies();
 

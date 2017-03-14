@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -22,21 +23,22 @@ import eu.alatar.popularmovies.rest.models.Movie;
 import eu.alatar.popularmovies.rest.models.MovieSet;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MovieListActivity extends AppCompatActivity implements MovieListAdapter.MovieListClickHandler {
 
-    private APIInterface mAPIInterface;
-
     private RecyclerView mMoviesRecyclerView;
     private MovieListAdapter mMovieListAdapter;
     private ProgressBar mLoadingIndicator;
+    private LinearLayout mErrorMessageBox;
 
     final private String BUNDLE_SORT_ORDER_KEY = "BUNDLE_SORT_ORDER_KEY";
     final private String BUNDLE_RV_STATE = "BUNDLE_RV_STATE";
     final private String BUNDLE_RV_DATA = "BUNDLE_RV_DATA";
 
     private int mMovieListCurrentSortOrder;
+    private Disposable mAPISubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         setContentView(R.layout.activity_movies_list);
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mErrorMessageBox = (LinearLayout) findViewById(R.id.box_error_message);
 
         // Initialize Movie List RecyclerView
         mMoviesRecyclerView = (RecyclerView) findViewById(R.id.rv_movies_list);
@@ -57,9 +60,6 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         // Initilize view default setting
         mMovieListCurrentSortOrder = Preferences.MOVIE_LIST_DEFAULT_SORT_ORDER;
         Log.d(Preferences.TAG, "MovieListActivity: Default sort order – " + String.valueOf(mMovieListCurrentSortOrder));
-
-        // Initilize API interface
-        mAPIInterface = RestService.getAPIService().mAPIInterface;
 
         // Restore the state from previous activity lifecycle
         if (savedInstanceState != null) {
@@ -97,29 +97,35 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
 
         // Show loading indicator
         mMoviesRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageBox.setVisibility(View.INVISIBLE);
         mLoadingIndicator.setVisibility(View.VISIBLE);
 
+        RestService service = RestService.getAPIService();
         Observable<MovieSet> request = null;
         if (mMovieListCurrentSortOrder == R.id.action_sort_most_popular) {
-            request = mAPIInterface.getPopularMovies();
+            request = service.api.getPopularMovies();
         } else if (mMovieListCurrentSortOrder == R.id.action_sort_top_rated) {
-            request = mAPIInterface.getTopRatedMovies();
+            request = service.api.getTopRatedMovies();
         }
-        request.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(moviesSet -> {
-                    if (moviesSet != null) {
-                        Log.d(Preferences.TAG, "Request successful. Displaying obtained movie posters...");
-                        mMovieListAdapter.addMovies(moviesSet.getResults());
-
-                        // Hide loading indicator
-                        mLoadingIndicator.setVisibility(View.INVISIBLE);
-                        mMoviesRecyclerView.setVisibility(View.VISIBLE);
-
-                    } else {
-                        Log.e(Preferences.TAG, "Body is empty!");
-                    }
-                });
+        mAPISubscription = request
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(moviesSet -> {
+                if (moviesSet != null) {
+                    Log.d(Preferences.TAG, "Request successful. Displaying obtained movie posters...");
+                    mMovieListAdapter.addMovies(moviesSet.getResults());
+                } else {
+                    Log.e(Preferences.TAG, "Body is empty!");
+                }
+            }, e -> {  // request failed
+                Log.e(Preferences.TAG, "Request failed!");
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                mErrorMessageBox.setVisibility(View.VISIBLE);
+            }, () -> { // request completed
+                // Hide loading indicator
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                mMoviesRecyclerView.setVisibility(View.VISIBLE);
+            });
     }
 
     @Override
@@ -152,10 +158,20 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(Preferences.TAG, "MovieListAcitivity: onSaveInstanceState — " + String.valueOf(mMovieListCurrentSortOrder));
+
+        ArrayList<Movie> data = mMovieListAdapter.getDataParcelable();
         outState.putInt(BUNDLE_SORT_ORDER_KEY, mMovieListCurrentSortOrder);
-        outState.putParcelableArrayList(BUNDLE_RV_DATA, mMovieListAdapter.getDataParcelable());
+        outState.putParcelableArrayList(BUNDLE_RV_DATA, data);
         outState.putParcelable(BUNDLE_RV_STATE, mMoviesRecyclerView.getLayoutManager().onSaveInstanceState());
+
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mAPISubscription != null && !mAPISubscription.isDisposed()) {
+            mAPISubscription.dispose();
+        }
+        super.onDestroy();
+    }
 }

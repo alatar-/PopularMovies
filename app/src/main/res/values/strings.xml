@@ -3,4 +3,7 @@
 
     <string name="menu_move_list_top_rated">Top rated</string>
     <string name="menu_move_list_most_popular">Most popular</string>
+
+    <string name="connection_failed_message">Connection failed.</string>
+    <string name="retry">Retry</string>
 </resources>
