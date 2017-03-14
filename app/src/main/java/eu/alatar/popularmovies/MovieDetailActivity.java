@@ -45,7 +45,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         mMovieThumbnailImageView = (ImageView) findViewById(R.id.iv_movie_thumbnail);
 
         // Parse and display intent context
-        mMovie = (Movie) getIntent().getSerializableExtra("movie");
+        mMovie = (Movie) getIntent().getParcelableExtra("movie");
         setTitle(mMovie.getTitle());
 
         mMovieReleaseDateTextView.setText(mMovie.getReleaseDate().substring(0, 4));

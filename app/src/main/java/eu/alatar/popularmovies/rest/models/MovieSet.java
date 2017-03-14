@@ -1,8 +1,6 @@
 package eu.alatar.popularmovies.rest.models;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /* Generated using http://www.jsonschema2pojo.org/ */
 public class MovieSet {
@@ -11,7 +9,6 @@ public class MovieSet {
     private List<Movie> results = null;
     private Integer totalResults;
     private Integer totalPages;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public Integer getPage() {
         return page;
@@ -43,14 +40,6 @@ public class MovieSet {
 
     public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }
