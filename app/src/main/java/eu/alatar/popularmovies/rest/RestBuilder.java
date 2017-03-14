@@ -8,7 +8,6 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import java.io.IOException;
 
 import eu.alatar.popularmovies.preferences.Credentials;
-import eu.alatar.popularmovies.preferences.Preferences;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;

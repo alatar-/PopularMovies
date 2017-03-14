@@ -142,7 +142,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         Log.d(Preferences.TAG, "MovieListAcitivity: onClick — " + movie.getTitle());
 
         Context context = getApplicationContext();
-        Class destinationActivity = MovieDetailActivity.class;
+        Class<MovieDetailActivity> destinationActivity = MovieDetailActivity.class;
         Intent intent = new Intent(context, destinationActivity);
 
         intent.putExtra("movie", movie);
