@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+
 import eu.alatar.popularmovies.preferences.Preferences;
 import eu.alatar.popularmovies.rest.APIInterface;
 import eu.alatar.popularmovies.rest.RestService;
@@ -30,8 +32,10 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     private MovieListAdapter mMovieListAdapter;
     private ProgressBar mLoadingIndicator;
 
-    final private String BUNDLE_SORT_ORDER_KEY = "sort_order";
-    final private String BUNDLE_RV_STATE = "rv_bundle_state";
+    final private String BUNDLE_SORT_ORDER_KEY = "BUNDLE_SORT_ORDER_KEY";
+    final private String BUNDLE_RV_STATE = "BUNDLE_RV_STATE";
+    final private String BUNDLE_RV_DATA = "BUNDLE_RV_DATA";
+
     private int mMovieListCurrentSortOrder;
 
     @Override
@@ -61,12 +65,19 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         if (savedInstanceState != null) {
             Log.d(Preferences.TAG, "MovieListActivity: Restoring data from provided bundle.");
 
+            // Restore sort order
             mMovieListCurrentSortOrder = savedInstanceState.getInt(BUNDLE_SORT_ORDER_KEY);
 
+            // Restore RV data
+            ArrayList<Movie> movieList = savedInstanceState.getParcelableArrayList(BUNDLE_RV_DATA);
+            mMovieListAdapter.applyDataParcelable(movieList);
+
+            // Restore RV position
             Parcelable movieListRVState = savedInstanceState.getParcelable(BUNDLE_RV_STATE);
-            populateData(movieListRVState);
+            mMoviesRecyclerView.getLayoutManager().onRestoreInstanceState(movieListRVState);
+
         } else {
-            populateData(null);
+            populateData();
         }
     }
 
@@ -75,16 +86,13 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         Log.d(Preferences.TAG, "MovieListActivity: onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.menu_movie_list, menu);
 
-        Log.e(Preferences.TAG, String.valueOf(R.id.action_sort_most_popular));
-        Log.e(Preferences.TAG, String.valueOf(mMovieListCurrentSortOrder));
-
         MenuItem sortOderMenuItem = menu.findItem(mMovieListCurrentSortOrder);
         sortOderMenuItem.setChecked(true);
 
         return true;
     }
 
-    private void populateData(Parcelable movieListRVState) {
+    private void populateData() {
         Log.d(Preferences.TAG, "MovieListAcitivity: populateData");
 
         // Show loading indicator
@@ -104,11 +112,6 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
                         Log.d(Preferences.TAG, "Request successful. Displaying obtained movie posters...");
                         mMovieListAdapter.addMovies(moviesSet.getResults());
 
-                        // Restore previous position
-                        if (movieListRVState != null) {
-                            mMoviesRecyclerView.getLayoutManager().onRestoreInstanceState(movieListRVState);
-                        }
-
                         // Hide loading indicator
                         mLoadingIndicator.setVisibility(View.INVISIBLE);
                         mMoviesRecyclerView.setVisibility(View.VISIBLE);
@@ -127,7 +130,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
         if (itemId == R.id.action_sort_most_popular || itemId == R.id.action_sort_top_rated) {
             item.setChecked(true);
             mMovieListCurrentSortOrder = itemId;
-            populateData(null);
+            populateData();
             return true;
         }
 
@@ -150,6 +153,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListAda
     protected void onSaveInstanceState(Bundle outState) {
         Log.d(Preferences.TAG, "MovieListAcitivity: onSaveInstanceState — " + String.valueOf(mMovieListCurrentSortOrder));
         outState.putInt(BUNDLE_SORT_ORDER_KEY, mMovieListCurrentSortOrder);
+        outState.putParcelableArrayList(BUNDLE_RV_DATA, mMovieListAdapter.getDataParcelable());
         outState.putParcelable(BUNDLE_RV_STATE, mMoviesRecyclerView.getLayoutManager().onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }

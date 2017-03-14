@@ -1,12 +1,12 @@
 package eu.alatar.popularmovies.rest.models;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /* Generated using http://www.jsonschema2pojo.org/ */
 public class MovieSet {
 
     private Integer page;
-    private List<Movie> results = null;
+    private ArrayList<Movie> results = null;
     private Integer totalResults;
     private Integer totalPages;
 
@@ -18,11 +18,11 @@ public class MovieSet {
         this.page = page;
     }
 
-    public List<Movie> getResults() {
+    public ArrayList<Movie> getResults() {
         return results;
     }
 
-    public void setResults(List<Movie> results) {
+    public void setResults(ArrayList<Movie> results) {
         this.results = results;
     }
 

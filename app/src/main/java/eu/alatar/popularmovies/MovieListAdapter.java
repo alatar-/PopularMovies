@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import eu.alatar.popularmovies.rest.models.Movie;
 
@@ -19,7 +18,7 @@ import eu.alatar.popularmovies.rest.models.Movie;
  */
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MoviesAdapterViewHolder> {
 
-    private List<Movie> mMovies;
+    private ArrayList<Movie> mMovies;
     private MovieListClickHandler mClickHandler;
 
     public interface MovieListClickHandler {
@@ -78,9 +77,18 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         notifyDataSetChanged();
     }
 
-    public void addMovies(List<Movie> movies) {
+    public void addMovies(ArrayList<Movie> movies) {
         this.mMovies.clear();
         this.mMovies.addAll(movies);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<Movie> getDataParcelable() {
+        return this.mMovies;
+    }
+
+    public void applyDataParcelable(ArrayList<Movie> movieList) {
+        this.mMovies = movieList;
         notifyDataSetChanged();
     }
 }
